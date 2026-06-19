@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asistente de Lengua de Señas</title>
+  <link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header class="header">
+      <h1>Asistente de Lengua de Señas 🤟</h1>
+      <div class="pedagogy-card">
+        <h2>¿Cómo funciona esto? 🧠</h2>
+        <p>
+          Este asistente utiliza un modelo de Inteligencia Artificial creado con <strong>Teachable Machine</strong>. 
+          Le hemos "enseñado" a reconocer señas mostrándole muchas fotos de diferentes personas realizando los gestos para "Por Favor", "Hola", "Chau" y "Ayuda". 
+          <br><br>
+          La IA encuentra patrones visuales en las imágenes y crea un modelo matemático. ¡Ahora puede ver a través de la cámara y predecir en tiempo real qué seña estás haciendo!
+        </p>
+        <div class="samples-preview">
+          <p><em>Ejemplo de una de las fotos con las que se entrenó el modelo:</em></p>
+          <img src="./muestra.png" alt="Muestra de entrenamiento" class="sample-image" />
+        </div>
+
+        <div class="training-classes">
+          <h3>Pose Objetivo de las Clases 📚</h3>
+          <p class="training-desc">
+            Aunque abajo te mostramos una única foto de referencia por cada seña, debes saber que el modelo fue entrenado con <strong>más de 300 fotos similares</strong> para cada una, capturando ligeras variaciones. Sin embargo, el modelo debería activarse (hacer "trigger") cuando imites la pose mostrada en estas imágenes:
+          </p>
+          
+          <div class="classes-grid">
+            <div class="class-card">
+              <img src="./Por favor.png" alt="Por favor" />
+              <span>Por Favor</span>
+            </div>
+            <div class="class-card">
+              <img src="./Hola.png" alt="Hola" />
+              <span>Hola</span>
+            </div>
+            <div class="class-card">
+              <img src="./Chau.png" alt="Chau" />
+              <span>Chau</span>
+            </div>
+            <div class="class-card">
+              <img src="./Ayuda.png" alt="Ayuda" />
+              <span>Ayuda</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="column left-column">
+        <div class="panel">
+          <h2>Tu Cámara 📷</h2>
+          <div class="camera-controls">
+            <select id="camera-select" class="dropdown"></select>
+          </div>
+          <div id="webcam-container" class="webcam-wrapper">
+            <!-- Webcam goes here -->
+            <div id="webcam-loading" class="loading">Cargando cámara...</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="column right-column">
+        <div class="panel">
+          <h2>Predicciones en Vivo 📊</h2>
+          <div id="label-container" class="bars-container">
+            <!-- Bars go here -->
+          </div>
+        </div>
+
+        <div class="panel challenge-panel">
+          <h2>¡Modo Desafío! 🎯</h2>
+          <p>Intenta hacer la siguiente seña. Tienes que superar el 85% de precisión.</p>
+          <div class="challenge-target">
+            Seña objetivo: <span id="target-sign" class="highlight">Cargando...</span>
+          </div>
+          <button id="next-challenge-btn" class="btn">Cambiar Seña</button>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
