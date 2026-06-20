@@ -1,7 +1,7 @@
 {
-  "name": "app",
-  "version": "0.0.0",
+  "name": "distraction-detector",
   "private": true,
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^8.0.12"
+    "vite": "^5.0.0"
   },
   "dependencies": {
     "@teachablemachine/image": "^0.8.5",

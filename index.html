@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Inteligencia Artificial - Escuela ProA Río Cuarto</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Portal de proyectos de Inteligencia Artificial y Machine Learning creados por estudiantes de la Escuela ProA Río Cuarto para la Feria de Ciencias 2026. Proyectos con impacto social.">
+    <meta name="keywords" content="Escuela ProA, Río Cuarto, Inteligencia Artificial, Teachable Machine, Feria de Ciencias, Lengua de Señas, DriveSafe, DMS">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS stylesheet -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="logo-container">
+            <i class="fa-solid fa-graduation-cap logo-icon"></i>
+            <span class="logo-text">PROA <span class="accent-text">IA</span></span>
+        </div>
+        <div class="header-status">
+            <span class="status-badge"><i class="fa-solid fa-flask"></i> FERIA DE CIENCIAS 2026</span>
+        </div>
+    </header>
+
+    <main class="portal-container">
+        
+        <!-- HERO SECTION -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <span class="hero-badge">6TO AÑO • DESARROLLO DE SOFTWARE</span>
+                <h1>Inteligencia Artificial con <span class="gradient-text">Impacto Social</span></h1>
+                <p class="hero-lead">
+                    Bienvenidos al portal de Inteligencia Artificial desarrollado por los estudiantes de la 
+                    <strong>Escuela ProA de la Ciudad de Río Cuarto</strong>. En el marco de la Feria de las Ciencias, 
+                    hemos creado modelos de aprendizaje automático orientados a resolver problemas reales de nuestra vida cotidiana, 
+                    enfocándonos en la seguridad y la accesibilidad universal.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#proyectos-anchor" class="btn btn-primary"><i class="fa-solid fa-rocket"></i> Explorar Proyectos</a>
+                    <a href="#pedagogia-anchor" class="btn btn-secondary"><i class="fa-solid fa-circle-info"></i> ¿Cómo se entrenan?</a>
+                </div>
+            </div>
+            <div class="hero-bg-glow"></div>
+        </section>
+
+        <!-- PROJECTS GRID SECTION -->
+        <section class="projects-section" id="proyectos-anchor">
+            <h2 class="section-title"><i class="fa-solid fa-cubes"></i> Proyectos Destacados</h2>
+            <p class="section-subtitle">Selecciona una de las aplicaciones web a continuación para probar el modelo en tiempo real usando tu cámara web.</p>
+            
+            <div class="projects-grid">
+                
+                <!-- CARD 1: DRIVESAFE AI -->
+                <article class="project-card">
+                    <div class="card-glow" style="background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%);"></div>
+                    <div class="card-icon-wrapper color-cyan">
+                        <i class="fa-solid fa-car-burst"></i>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-tag tag-cyan">SEGURIDAD VIAL</span>
+                        <h3>DriveSafe AI</h3>
+                        <p class="card-text">
+                            Un simulador de conducción y sistema DMS (Driver Monitoring System). Utiliza la webcam y un modelo clasificador para detectar la distracción y fatiga al volante, disparando alarmas acústicas y visuales automáticas para evitar siniestros.
+                        </p>
+                        <ul class="card-features">
+                            <li><i class="fa-solid fa-check"></i> Alerta sonora y visual instantánea</li>
+                            <li><i class="fa-solid fa-check"></i> Síntesis de voz (Text-to-Speech)</li>
+                            <li><i class="fa-solid fa-check"></i> Simulación de velocidad adaptativa</li>
+                        </ul>
+                        <a href="/drivesafe/index.html" class="btn btn-primary btn-full"><i class="fa-solid fa-play"></i> Iniciar Simulador</a>
+                    </div>
+                </article>
+
+                <!-- CARD 2: SIGN LANGUAGE ASSISTENT -->
+                <article class="project-card">
+                    <div class="card-glow" style="background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);"></div>
+                    <div class="card-icon-wrapper color-purple">
+                        <i class="fa-solid fa-hands-asl-interpreting"></i>
+                    </div>
+                    <div class="card-body">
+                        <span class="card-tag tag-purple">ACCESIBILIDAD</span>
+                        <h3>Asistente de Lengua de Señas</h3>
+                        <p class="card-text">
+                            Un software inclusivo para la traducción de gestos de señas básicas en tiempo real. Cuenta con un "Modo Desafío" lúdico que motiva a los usuarios a practicar y aprender señas del abecedario o frases cotidianas con retroalimentación interactiva.
+                        </p>
+                        <ul class="card-features">
+                            <li><i class="fa-solid fa-check"></i> Reconocimiento de gestos comunes</li>
+                            <li><i class="fa-solid fa-check"></i> Modo Desafío interactivo con puntajes</li>
+                            <li><i class="fa-solid fa-check"></i> Efecto confeti al acertar la pose</li>
+                        </ul>
+                        <a href="/lenguadesenas/index.html" class="btn btn-purple btn-full"><i class="fa-solid fa-hands-sign"></i> Iniciar Traductor</a>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- ML EXPLAINER SECTION -->
+        <section class="pedagogical-section" id="pedagogia-anchor">
+            <div class="pedagogical-container">
+                <div class="pedagogical-text">
+                    <h2 class="section-title left-align"><i class="fa-solid fa-brain"></i> ¿Cómo se entrenan estos modelos?</h2>
+                    <p class="section-subtitle left-align">El proceso detrás de la creación y puesta en marcha de nuestros modelos de aprendizaje automático en Teachable Machine.</p>
+                    
+                    <div class="steps-list">
+                        <div class="step-card">
+                            <div class="step-num">01</div>
+                            <div class="step-details">
+                                <h4>Recolección de Datos</h4>
+                                <p>Capturamos cientos de fotos mediante la cámara web de los estudiantes para cada clase (ej. persona atenta frente a la pantalla versus persona mirando el teléfono, o poses exactas de manos).</p>
+                            </div>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">02</div>
+                            <div class="step-details">
+                                <h4>Aprendizaje por Transferencia (Transfer Learning)</h4>
+                                <p>Utilizamos una red neuronal convolucional pre-entrenada para identificar siluetas (MobileNet). Entrenamos únicamente la capa clasificadora final con nuestras muestras, lo que toma pocos segundos.</p>
+                            </div>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">03</div>
+                            <div class="step-details">
+                                <h4>Ejecución Local con TensorFlow.js</h4>
+                                <p>El modelo resultante se aloja de forma estática o remota y se ejecuta directo en el navegador web. Las predicciones ocurren localmente en tu computadora, garantizando privacidad y velocidad sin retrasos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pedagogical-graphic">
+                    <div class="value-card">
+                        <h3>El Valor de los Modelos</h3>
+                        <p>
+                            En el desarrollo de software actual, la Inteligencia Artificial cobra verdadero valor cuando se enfoca en resolver **problemas cotidianos**.
+                        </p>
+                        <div class="value-points">
+                            <div class="value-point">
+                                <i class="fa-solid fa-people-group"></i>
+                                <div>
+                                    <h5>Accesibilidad Inclusiva</h5>
+                                    <p>Reducir la brecha de comunicación para personas sordomudas.</p>
+                                </div>
+                            </div>
+                            <div class="value-point">
+                                <i class="fa-solid fa-shield-heart"></i>
+                                <div>
+                                    <h5>Seguridad Inteligente</h5>
+                                    <p>Salvar vidas mediante alarmas reactivas en sistemas viales.</p>
+                                </div>
+                            </div>
+                            <div class="value-point">
+                                <i class="fa-solid fa-laptop-code"></i>
+                                <div>
+                                    <h5>Soberanía Tecnológica</h5>
+                                    <p>Estudiantes secundarios de Río Cuarto dominando tecnologías del mañana.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 Escuela ProA Río Cuarto. Especialidad en Desarrollo de Software.</p>
+            <p class="footer-libs">Proyectos de estudiantes presentados en la Feria de las Ciencias con <i class="fa-brands fa-js"></i> Vanilla JS, <i class="fa-solid fa-brain"></i> TensorFlow.js.</p>
+        </div>
+    </footer>
+
+    <!-- Main JavaScript for basic home interactions -->
+    <script type="module" src="/main.js"></script>
+</body>
+</html>

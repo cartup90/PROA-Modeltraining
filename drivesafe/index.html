@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveSafe AI - Sistema Inteligente de Alerta de Distracción al Volante</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="DriveSafe AI utiliza inteligencia artificial en tiempo real y visión computacional para alertar distracciones al volante, previniendo accidentes de tráfico mediante sistemas DMS.">
+    <meta name="keywords" content="Teachable Machine, Inteligencia Artificial, Seguridad Vial, DMS, Visión Computacional, TensorFlow, Conducción Atenta">
+    <meta name="author" content="DriveSafe AI">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS stylesheet -->
+    <link rel="stylesheet" href="./style.css">
+    
+    <!-- TensorFlow.js and Teachable Machine Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="logo-container">
+            <i class="fa-solid fa-car-on logo-icon"></i>
+            <span class="logo-text">DriveSafe <span class="accent-text">AI</span></span>
+        </div>
+        <div class="header-status">
+            <span class="status-indicator-dot" id="system-status-dot"></span>
+            <span id="system-status-text" class="status-text">SISTEMA INACTIVO</span>
+        </div>
+    </header>
+
+    <main class="app-container">
+        
+        <!-- ROW 1: SIMULATOR & CONTROLS -->
+        <section class="simulator-section">
+            
+            <!-- Windshield & Cockpit Simulator -->
+            <div class="cockpit-container" id="cockpit-viewport">
+                <!-- Windshield View (Moving Road Canvas) -->
+                <div class="windshield">
+                    <canvas id="road-canvas"></canvas>
+                    
+                    <!-- HUD Warning Overlay -->
+                    <div class="hud-warning-overlay" id="hud-alert-overlay">
+                        <div class="hud-warning-content">
+                            <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+                            <span class="warning-title">¡ALERTA DE DISTRACCIÓN!</span>
+                            <span class="warning-subtitle">POR FAVOR, MIRE AL FRENTE</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rearview Mirror (Camera Stream Display) -->
+                <div class="rearview-mirror">
+                    <div class="mirror-bezel">
+                        <div class="mirror-glass">
+                            <div class="camera-placeholder" id="camera-loading">
+                                <i class="fa-solid fa-camera camera-placeholder-icon"></i>
+                                <span>Cámara Desactivada</span>
+                            </div>
+                            <div id="webcam-container"></div>
+                            
+                            <!-- Scanning Overlay Grid -->
+                            <div class="mirror-overlay" id="mirror-scan-line"></div>
+                            <div class="face-guide" id="face-guide-svg">
+                                <svg viewBox="0 0 100 100">
+                                    <path d="M 30,40 Q 30,25 50,25 Q 70,25 70,40 Q 70,75 50,85 Q 30,75 30,40 Z" fill="none" stroke="rgba(0, 255, 100, 0.4)" stroke-width="1" stroke-dasharray="2 2" />
+                                    <circle cx="40" cy="45" r="3" fill="rgba(0, 255, 100, 0.3)" />
+                                    <circle cx="60" cy="45" r="3" fill="rgba(0, 255, 100, 0.3)" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mirror-stem"></div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Console -->
+                <div class="dashboard">
+                    <!-- Dashboard Indicators Grid -->
+                    <div class="dashboard-grid">
+                        
+                        <!-- Speedometer (Dial/Progress style) -->
+                        <div class="dashboard-widget gauge-widget">
+                            <div class="gauge-ring">
+                                <svg class="progress-ring" width="100" height="100">
+                                    <circle class="progress-ring__circle-bg" stroke="#111928" stroke-width="6" fill="transparent" r="40" cx="50" cy="50"/>
+                                    <circle class="progress-ring__circle" id="speed-gauge" stroke="var(--primary-color)" stroke-width="6" fill="transparent" r="40" cx="50" cy="50"/>
+                                </svg>
+                                <div class="gauge-value">
+                                    <span id="speed-display" class="digital-num">0</span>
+                                    <span class="unit">km/h</span>
+                                </div>
+                            </div>
+                            <div class="widget-label">VELOCIDAD</div>
+                        </div>
+
+                        <!-- Central System Message Screen -->
+                        <div class="dashboard-widget display-widget">
+                            <div class="digital-screen" id="digital-screen">
+                                <div class="screen-title">MONITOR DMS</div>
+                                <div class="screen-main-msg" id="screen-status-msg">SISTEMA APAGADO</div>
+                                <div class="screen-sub-msg" id="screen-sub-msg">Presione Iniciar Sistema</div>
+                            </div>
+                        </div>
+
+                        <!-- Inference Results Widget -->
+                        <div class="dashboard-widget stats-widget">
+                            <div class="inference-bars">
+                                <div class="bar-container">
+                                    <div class="bar-label">
+                                        <span>ATENTO</span>
+                                        <span id="score-atento" class="score-val">0%</span>
+                                    </div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill fill-atento" id="bar-atento"></div>
+                                    </div>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-label">
+                                        <span>DISTRAÍDO</span>
+                                        <span id="score-distraido" class="score-val">0%</span>
+                                    </div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill fill-distraido" id="bar-distraido"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="widget-label">ANÁLISIS DE ATENCIÓN</div>
+                        </div>
+
+                    </div>
+
+                    <!-- Steering Wheel Overlay -->
+                    <div class="steering-wheel-container">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='none' stroke='%231f2937' stroke-width='8'/><circle cx='50' cy='50' r='12' fill='%23111827' stroke='%23374151' stroke-width='2'/><path d='M 12 50 L 38 50 M 62 50 L 88 50 M 50 62 L 50 88' stroke='%23374151' stroke-width='6'/><path d='M 38 50 A 12 12 0 0 0 62 50' fill='none' stroke='%231f2937' stroke-width='4'/></svg>" class="steering-wheel" id="steering-wheel-img" alt="Volante">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Control Center -->
+            <div class="controls-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-sliders"></i> Panel de Configuración</h2>
+                </div>
+                
+                <div class="controls-grid">
+                    <!-- Main Action Buttons -->
+                    <div class="control-group action-group">
+                        <button id="btn-start" class="btn btn-primary btn-pulse">
+                            <i class="fa-solid fa-play"></i> Iniciar Sistema
+                        </button>
+                        <button id="btn-stop" class="btn btn-danger" disabled>
+                            <i class="fa-solid fa-stop"></i> Detener
+                        </button>
+                    </div>
+
+                    <!-- Audio Configurations -->
+                    <div class="control-group">
+                        <label class="control-label"><i class="fa-solid fa-volume-high"></i> Tipo de Alerta Sonora</label>
+                        <select id="select-alert-type" class="form-select">
+                            <option value="pulse">Pitido Pulsante (Recomendado)</option>
+                            <option value="siren">Alarma Continua</option>
+                            <option value="voice">Voz Sintetizada ("¡Atención al volante!")</option>
+                        </select>
+                    </div>
+
+                    <!-- Volume slider -->
+                    <div class="control-group">
+                        <label class="control-label">
+                            <span><i class="fa-solid fa-volume-low"></i> Volumen</span>
+                            <span id="volume-val">80%</span>
+                        </label>
+                        <input type="range" id="slider-volume" min="0" max="100" value="80" class="form-range">
+                    </div>
+
+                    <!-- Audio Mute & Test Alerts -->
+                    <div class="control-group test-actions">
+                        <button id="btn-mute" class="btn btn-secondary-outline">
+                            <i class="fa-solid fa-volume-xmark"></i> Silenciar
+                        </button>
+                        <button id="btn-test-alert" class="btn btn-secondary-outline">
+                            <i class="fa-solid fa-circle-exclamation"></i> Probar Alarma
+                        </button>
+                    </div>
+                    
+                    <!-- Teachable Machine Model URL Input -->
+                    <div class="control-group full-width-control">
+                        <label class="control-label" for="model-url-input">
+                            <span><i class="fa-solid fa-link"></i> URL del Modelo Teachable Machine</span>
+                        </label>
+                        <div class="input-action-group">
+                            <input type="text" id="model-url-input" class="form-input" value="https://teachablemachine.withgoogle.com/models/uBf6EKeRr/">
+                            <button id="btn-reload-model" class="btn btn-secondary">Cargar Modelo</button>
+                        </div>
+                        <p class="input-help">Carga tu modelo personalizado exportado como "Tensorflow.js - Upload shareable link".</p>
+                    </div>
+                </div>
+
+                <div class="system-logs-container">
+                    <div class="logs-header">
+                        <span><i class="fa-solid fa-list-check"></i> Historial del Sistema</span>
+                        <button id="btn-clear-logs" class="btn-text">Limpiar</button>
+                    </div>
+                    <div class="logs-body" id="system-logs">
+                        <div class="log-entry log-info">[00:00:00] Listo para iniciar. Por favor conceda acceso a la cámara.</div>
+                    </div>
+                </div>
+            </div>
+            
+        </section>
+
+        <!-- ROW 2: EDUCATIONAL AND VALUATION SECTIONS -->
+        <section class="educational-section">
+            
+            <!-- Tabs Navigation -->
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="tab-importance">
+                    <i class="fa-solid fa-shield-halved"></i> Importancia del Proyecto
+                </button>
+                <button class="tab-btn" data-tab="tab-how-it-works">
+                    <i class="fa-solid fa-gears"></i> ¿Cómo Funciona la IA?
+                </button>
+                <button class="tab-btn" data-tab="tab-training">
+                    <i class="fa-solid fa-graduation-cap"></i> ¿Cómo se Entrena?
+                </button>
+            </div>
+
+            <!-- Tabs Content -->
+            <div class="tabs-content">
+                
+                <!-- TAB 1: IMPORTANCE & VALUE -->
+                <div class="tab-pane active" id="tab-importance">
+                    <div class="info-grid">
+                        <div class="info-text">
+                            <h3>El Valor de Prevenir la Distracción al Volante</h3>
+                            <p class="lead-text">
+                                La distracción del conductor es una de las principales causas de accidentes viales a nivel mundial. Según la Organización Mundial de la Salud (OMS), los conductores que usan el teléfono móvil tienen aproximadamente **4 veces más probabilidades** de sufrir un accidente.
+                            </p>
+                            <p>
+                                Este proyecto propone un prototipo funcional de **DMS (Driver Monitoring System)** o Sistema de Monitoreo del Conductor. Estos sistemas están migrando de ser características premium de autos de lujo a convertirse en requisitos reglamentarios estándar de seguridad activa.
+                            </p>
+                            
+                            <div class="key-benefits">
+                                <div class="benefit-card">
+                                    <i class="fa-solid fa-heart-pulse benefit-icon"></i>
+                                    <h4>Salvar Vidas</h4>
+                                    <p>Una alerta a tiempo de 1.5 segundos puede prevenir hasta el 90% de las colisiones por alcance trasero.</p>
+                                </div>
+                                <div class="benefit-card">
+                                    <i class="fa-solid fa-truck-moving benefit-icon"></i>
+                                    <h4>Gestión de Flotas</h4>
+                                    <p>Permite a empresas de transporte reducir siniestros, proteger sus cargas y auditar la seguridad de sus operadores.</p>
+                                </div>
+                                <div class="benefit-card">
+                                    <i class="fa-solid fa-file-invoice-dollar benefit-icon"></i>
+                                    <h4>Reducción de Costos</h4>
+                                    <p>Disminuye primas de seguros vehiculares y evita multas, daños materiales y costosos tiempos de inactividad.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-graphic">
+                            <div class="graphic-card">
+                                <div class="stat-highlight">DMS</div>
+                                <h4>Seguridad Activa Avanzada (ADAS)</h4>
+                                <ul class="graphic-list">
+                                    <li><i class="fa-solid fa-check text-success"></i> Monitoreo de fatiga y microsueños.</li>
+                                    <li><i class="fa-solid fa-check text-success"></i> Detección de uso de celular y desvíos de mirada.</li>
+                                    <li><i class="fa-solid fa-check text-success"></i> Integración con sistemas de frenado autónomo (AEB).</li>
+                                    <li><i class="fa-solid fa-check text-success"></i> Cumplimiento con normativas Euro NCAP 2026.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: HOW IT WORKS -->
+                <div class="tab-pane" id="tab-how-it-works">
+                    <div class="info-grid">
+                        <div class="info-text">
+                            <h3>La Tecnología detrás de la Visión Computacional</h3>
+                            <p>
+                                El sistema de detección utiliza modelos de **Redes Neuronales Convolucionales (CNN)** optimizados para ejecutarse en tiempo real directamente en el navegador del usuario utilizando <strong>TensorFlow.js</strong>.
+                            </p>
+                            
+                            <div class="process-steps">
+                                <div class="step-item">
+                                    <div class="step-number">1</div>
+                                    <div class="step-info">
+                                        <h4>Captura del Frame (Video)</h4>
+                                        <p>La cámara web captura secuencias de imágenes a 30 cuadros por segundo. Cada imagen es un arreglo de píxeles con canales de color (RGB).</p>
+                                    </div>
+                                </div>
+                                <div class="step-item">
+                                    <div class="step-number">2</div>
+                                    <div class="step-info">
+                                        <h4>Preprocesamiento</h4>
+                                        <p>La imagen se redimensiona a 224x224 píxeles (formato estándar de MobileNet) y se normalizan los valores numéricos de color para que el modelo los procese eficientemente.</p>
+                                    </div>
+                                </div>
+                                <div class="step-item">
+                                    <div class="step-number">3</div>
+                                    <div class="step-info">
+                                        <h4>Inferencia de la Red Neuronal</h4>
+                                        <p>La red procesa las características geométricas del rostro (posición de ojos, orientación de la cabeza). La capa de salida entrega un vector de probabilidades para cada clase.</p>
+                                    </div>
+                                </div>
+                                <div class="step-item">
+                                    <div class="step-number">4</div>
+                                    <div class="step-info">
+                                        <h4>Filtro de Decisión y Alarma</h4>
+                                        <p>Para evitar falsos positivos por parpadeos o movimientos rápidos, el sistema aplica un filtro temporal. Si el estado "Distraído" se mantiene durante un número consecutivo de frames, se dispara la alerta.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-graphic">
+                            <div class="diagram-box">
+                                <h4>Arquitectura de Aprendizaje por Transferencia</h4>
+                                <div class="diagram-flow">
+                                    <div class="diagram-node"><i class="fa-solid fa-camera"></i> Webcam</div>
+                                    <div class="diagram-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                                    <div class="diagram-node node-special">MobileNet v2 <small>(Extractor de Características Pre-entrenado)</small></div>
+                                    <div class="diagram-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                                    <div class="diagram-node node-user">Capa Clasificadora Personalizada <small>(Tus Clases: Atento vs Distraído)</small></div>
+                                    <div class="diagram-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                                    <div class="diagram-node"><i class="fa-solid fa-bell"></i> Acción / Alerta</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: TRAINING GUIDE -->
+                <div class="tab-pane" id="tab-training">
+                    <div class="info-grid">
+                        <div class="info-text">
+                            <h3>Cómo se Entrena un Modelo en Teachable Machine</h3>
+                            <p>
+                                Teachable Machine de Google democratiza la creación de modelos de aprendizaje automático mediante un método llamado <strong>Transfer Learning</strong> (Aprendizaje por Transferencia), utilizando una base robusta como MobileNet y entrenando únicamente la última capa clasificadora.
+                            </p>
+                            
+                            <h4>Pasos para Entrenar tu propio detector:</h4>
+                            <ol class="styled-list">
+                                <li>
+                                    <strong>Definición de Clases:</strong> 
+                                    Se crean dos categorías. En este caso, <code>Atento</code> (conductor mirando al frente, manos al volante) y <code>Distraído</code> (conductor mirando el celular, volteando hacia atrás, cerrando los ojos).
+                                </li>
+                                <li>
+                                    <strong>Recolección de Datos (Fotos):</strong>
+                                    A través de la cámara web, se graban muestras de video para cada clase. Es vital variar la iluminación, distancia, gestos y sostener objetos distractores para lograr un modelo robusto que generalice bien.
+                                </li>
+                                <li>
+                                    <strong>Entrenamiento del Modelo:</strong>
+                                    Se procesan las imágenes recopiladas. Los hiperparámetros clave son:
+                                    <ul>
+                                        <li><strong>Épocas (Epochs):</strong> Cuántas veces el algoritmo revisa el conjunto de datos completo.</li>
+                                        <li><strong>Tamaño de Lote (Batch Size):</strong> Número de muestras de entrenamiento utilizadas en una sola iteración de actualización.</li>
+                                        <li><strong>Tasa de Aprendizaje (Learning Rate):</strong> La velocidad a la que la red ajusta sus pesos internos.</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <strong>Exportación:</strong>
+                                    Se sube el modelo a la nube de Google Teachable Machine o se descarga localmente para usarlo mediante su API de JavaScript.
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="info-graphic">
+                            <div class="steps-carousel">
+                                <div class="carousel-slide">
+                                    <div class="slide-icon"><i class="fa-solid fa-images"></i></div>
+                                    <h5>Paso 1: Muestras limpias</h5>
+                                    <p>Recopila al menos 200 a 500 imágenes por clase para una precisión aceptable.</p>
+                                </div>
+                                <div class="carousel-slide">
+                                    <div class="slide-icon"><i class="fa-solid fa-gears animate-spin-slow"></i></div>
+                                    <h5>Paso 2: Entrenamiento</h5>
+                                    <p>Mantén los valores por defecto (50 épocas) y revisa si hay sobreajuste (overfitting).</p>
+                                </div>
+                                <div class="carousel-slide">
+                                    <div class="slide-icon"><i class="fa-solid fa-code"></i></div>
+                                    <h5>Paso 3: Integración</h5>
+                                    <p>Copia el enlace en nuestro panel de control y prueba el comportamiento instantáneamente.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 DriveSafe AI. Proyecto Educativo de Seguridad Vial con Machine Learning.</p>
+            <p class="footer-libs">Construido con <i class="fa-brands fa-js"></i> Vanilla JS, <i class="fa-solid fa-brain"></i> TensorFlow.js y Teachable Machine.</p>
+        </div>
+    </footer>
+
+    <!-- Main Javascript entry point -->
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
