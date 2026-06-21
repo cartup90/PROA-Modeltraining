@@ -12,6 +12,9 @@
     --purple-color: #8b5cf6;
     --purple-glow: rgba(139, 92, 246, 0.25);
     
+    --red-color: #ff3366;
+    --red-glow: rgba(255, 51, 102, 0.25);
+    
     --font-ui: 'Outfit', sans-serif;
     --font-digital: 'Rajdhani', sans-serif;
     
@@ -272,6 +275,12 @@ body {
     border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
+.color-red {
+    background-color: rgba(255, 51, 102, 0.1);
+    color: var(--red-color);
+    border: 1px solid rgba(255, 51, 102, 0.2);
+}
+
 .card-body {
     display: flex;
     flex-direction: column;
@@ -298,6 +307,11 @@ body {
 .tag-purple {
     background-color: rgba(139, 92, 246, 0.08);
     color: var(--purple-color);
+}
+
+.tag-red {
+    background-color: rgba(255, 51, 102, 0.08);
+    color: var(--red-color);
 }
 
 .card-body h3 {
@@ -333,6 +347,10 @@ body {
 
 .project-card:nth-child(2) .card-features li i {
     color: var(--purple-color);
+}
+
+.project-card:nth-child(3) .card-features li i {
+    color: var(--red-color);
 }
 
 /* Pedagogical & Info section */
@@ -525,6 +543,18 @@ body {
 .btn-purple:hover {
     background-color: #7c3aed;
     box-shadow: 0 0 25px rgba(139, 92, 246, 0.35);
+    transform: translateY(-2px);
+}
+
+.btn-red {
+    background-color: var(--red-color);
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 51, 102, 0.15);
+}
+
+.btn-red:hover {
+    background-color: #e02454;
+    box-shadow: 0 0 25px rgba(255, 51, 102, 0.35);
     transform: translateY(-2px);
 }
 

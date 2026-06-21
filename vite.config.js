@@ -9,6 +9,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         drivesafe: resolve(__dirname, 'drivesafe/index.html'),
         lenguadesenas: resolve(__dirname, 'lenguadesenas/index.html'),
+        "evitar-phishing": resolve(__dirname, 'evitar-phishing/index.html'),
       },
     },
   },

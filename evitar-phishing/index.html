@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-Phishing AI - Reconocedor Inteligente de Mensajes Sospechosos</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Anti-Phishing AI utiliza aprendizaje automático y procesamiento de lenguaje natural para detectar mensajes de texto estafa y phishing en tiempo real. Creado por estudiantes de la Escuela ProA.">
+    <meta name="keywords" content="Anti-Phishing, Inteligencia Artificial, Ciberseguridad, Machine Learning for Kids, Aprendizaje Automático, Feria de Ciencias">
+    <meta name="author" content="Escuela ProA - Tiago, Benja y Franco">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS stylesheet -->
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <a href="../index.html" class="logo-container" style="text-decoration: none; color: inherit;">
+            <i class="fa-solid fa-shield-halved logo-icon"></i>
+            <span class="logo-text">AntiPhishing <span class="accent-text">AI</span></span>
+        </a>
+        <div class="header-status">
+            <span class="status-indicator-dot" id="system-status-dot"></span>
+            <span id="system-status-text" class="status-text">ESPERANDO ENTRADA</span>
+        </div>
+    </header>
+
+    <main class="app-container">
+        
+        <!-- HEADER INFO -->
+        <section class="intro-section">
+            <div class="authors-badge">PROYECTO DE: TIAGO, BENJA Y FRANCO</div>
+            <h1>Detector de Mensajes de <span class="gradient-text">Phishing & Estafas</span></h1>
+            <p class="intro-lead">
+                Analiza mensajes sospechosos en tiempo real. Esta herramienta utiliza un modelo de clasificación de texto 
+                entrenado para identificar si un mensaje es un intento de engaño o si es seguro para interactuar.
+            </p>
+        </section>
+
+        <!-- DASHBOARD CONTAINER -->
+        <div class="dashboard-grid">
+            
+            <!-- COLUMN 1: CONSOLE AND INPUT PANEL -->
+            <section class="console-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-terminal"></i> Terminal de Entrada</h2>
+                    <span class="help-tooltip" title="Selecciona una plantilla de estafa para cargarla rápidamente o escribe un texto libre para evaluarlo con la Inteligencia Artificial."><i class="fa-solid fa-circle-question"></i></span>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Templates Section -->
+                    <div class="templates-container">
+                        <h3><i class="fa-solid fa-copy"></i> Cargar Plantillas de Prueba</h3>
+                        <div class="templates-grid">
+                            <button class="template-btn type-danger" data-text="¡URGENTE! Su cuenta de Homebanking ha sido suspendida temporalmente por actividad inusual. Ingrese aquí inmediatamente para desbloquearla: http://banco-credicoop-seguridad.net/login">
+                                <i class="fa-solid fa-bank"></i> Banco Bloqueado
+                            </button>
+                            <button class="template-btn type-danger" data-text="¡FELICITACIONES! Tu número de línea ha sido seleccionado como el ganador de un automóvil 0KM y $500.000 pesos en efectivo. Para reclamar tu premio comunicate urgente a este WhatsApp. Envíanos código SMS recibido.">
+                                <i class="fa-solid fa-trophy"></i> Premio Falso
+                            </button>
+                            <button class="template-btn type-danger" data-text="CORREO ARGENTINO: Tu envío no pudo ser entregado debido a una tarifa de aduana pendiente de $550 ARS. Por favor, realice el pago en el siguiente enlace dentro de las 24 horas: http://correoargentino-tarifa.com/envio">
+                                <i class="fa-solid fa-truck-ramp-box"></i> Correo Falso
+                            </button>
+
+                            <button class="template-btn type-success" data-text="Hola Marian, te confirmo que reservé la mesa para el sábado a las 21hs. ¿Llevás el postre o lo compramos allá? Avísame, ¡un abrazo!">
+                                <i class="fa-solid fa-message"></i> Mensaje Familiar
+                            </button>
+                            <button class="template-btn type-success" data-text="Estimado cliente, adjuntamos la factura correspondiente al servicio del mes de Junio 2026. La misma se debitará automáticamente de su cuenta el día de vencimiento.">
+                                <i class="fa-solid fa-file-invoice"></i> Factura Real
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Input Form -->
+                    <div class="input-container">
+                        <label for="message-input" class="input-label">
+                            <span><i class="fa-solid fa-pen-clip"></i> Texto a Evaluar</span>
+                            <span id="char-counter" class="char-counter">0 / 500 caracteres</span>
+                        </label>
+                        <textarea id="message-input" class="form-textarea" placeholder="Escribe o pega aquí el SMS, email o mensaje de WhatsApp que sospechas que es una estafa..." maxlength="500"></textarea>
+                    </div>
+
+                    <!-- Controls Group -->
+                    <div class="actions-group">
+                        <button id="btn-scan" class="btn btn-primary btn-pulse" disabled>
+                            <i class="fa-solid fa-radar"></i> Escanear Mensaje
+                        </button>
+                        <button id="btn-clear" class="btn btn-secondary">
+                            <i class="fa-solid fa-trash-can"></i> Limpiar
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- COLUMN 2: REAL-TIME THREAT SCANNER -->
+            <section class="scanner-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-triangle-exclamation"></i> Diagnóstico de Amenaza</h2>
+                    <span id="mode-badge" class="mode-badge badge-idle">DESCONECTADO</span>
+                </div>
+                
+                <div class="card-body">
+                    
+                    <!-- Scanner Screen & Gauges -->
+                    <div class="scanner-screen" id="scanner-screen">
+                        
+                        <!-- Radar & Scanner Grid effect -->
+                        <div class="grid-overlay"></div>
+                        <div class="scan-bar" id="scan-bar"></div>
+                        
+                        <!-- Visual Gauge Dial -->
+                        <div class="threat-gauge">
+                            <svg class="gauge-svg" viewBox="0 0 120 120">
+                                <circle class="gauge-bg" cx="60" cy="60" r="50" fill="transparent" stroke="#111928" stroke-width="8"></circle>
+                                <circle class="gauge-progress" id="gauge-progress" cx="60" cy="60" r="50" fill="transparent" stroke="var(--accent-color)" stroke-width="8" stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+                            </svg>
+                            <div class="gauge-content">
+                                <span class="gauge-label">RIESGO</span>
+                                <span id="risk-score" class="digital-num font-digital">--%</span>
+                            </div>
+                        </div>
+
+                        <!-- System Alerts -->
+                        <div class="scanner-message-box">
+                            <div id="scanner-main-msg" class="screen-main-msg">ESPERANDO ANÁLISIS</div>
+                            <div id="scanner-sub-msg" class="screen-sub-msg">Ingrese un texto para escanear en tiempo real</div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Details -->
+                    <div class="metrics-container">
+                        
+                        <div class="metric-row">
+                            <span class="metric-label"><i class="fa-solid fa-percent"></i> Confianza del Modelo</span>
+                            <div class="metric-progress-wrapper">
+                                <div class="metric-progress-bar" id="bar-confidence"></div>
+                            </div>
+                            <span id="score-confidence" class="metric-val digital-num font-digital">0%</span>
+                        </div>
+
+                        <div class="analysis-details">
+                            <h3><i class="fa-solid fa-list-check"></i> Análisis de Indicadores</h3>
+                            <ul class="indicators-list" id="indicators-list">
+                                <li class="idle-item"><i class="fa-solid fa-circle-notch fa-spin"></i> Esperando análisis de texto...</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- EDUCATIONAL SECTION -->
+        <section class="educational-section">
+            
+            <!-- Tabs Navigation -->
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="tab-what-is">
+                    <i class="fa-solid fa-user-shield"></i> ¿Qué es el Phishing?
+                </button>
+                <button class="tab-btn" data-tab="tab-how-ia">
+                    <i class="fa-solid fa-microchip"></i> ¿Cómo funciona la IA?
+                </button>
+                <button class="tab-btn" data-tab="tab-prevention">
+                    <i class="fa-solid fa-hand-holding-hand"></i> Consejos de Prevención
+                </button>
+            </div>
+
+            <!-- Tabs Content -->
+            <div class="tabs-content">
+                
+                <!-- TAB 1: WHAT IS PHISHING -->
+                <div class="tab-pane active" id="tab-what-is">
+                    <div class="info-grid">
+                        <div class="info-text">
+                            <h3>Ingeniería Social y Engaño Digital</h3>
+                            <p class="lead-text">
+                                El **phishing** es una técnica de ciberdelincuencia basada en la ingeniería social. Su objetivo es engañar a las personas para que compartan información confidencial, como contraseñas, números de tarjetas de crédito o códigos de autenticación.
+                            </p>
+                            <p>
+                                Los estafadores se hacen pasar por organizaciones legítimas (como bancos, empresas de envíos o servicios técnicos) enviando mensajes persuasivos que simulan urgencia extrema o la promesa de un gran beneficio económico.
+                            </p>
+                            <div class="phishing-types">
+                                <div class="type-card">
+                                    <i class="fa-solid fa-envelope-open-text icon-cyan"></i>
+                                    <h4>Email Phishing</h4>
+                                    <p>Correos electrónicos con logos clonados y enlaces que redirigen a formularios web fraudulentos.</p>
+                                </div>
+                                <div class="type-card">
+                                    <i class="fa-solid fa-mobile-screen icon-cyan"></i>
+                                    <h4>Smishing (SMS)</h4>
+                                    <p>Mensajes de texto cortos que alertan sobre deudas falsas o bloqueos de tarjetas bancarias.</p>
+                                </div>
+                                <div class="type-card">
+                                    <i class="fa-solid fa-user-ninja icon-cyan"></i>
+                                    <h4>Suplantación</h4>
+                                    <p>Falsos agentes de soporte de WhatsApp pidiendo el token de seguridad para robar cuentas.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-graphic">
+                            <div class="cyber-stat-card">
+                                <h3>El enemigo invisible</h3>
+                                <div class="accent-number font-digital">90%</div>
+                                <p>De los ciberataques exitosos a nivel mundial comienzan a través de correos o mensajes de Phishing.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: HOW THE IA WORKS -->
+                <div class="tab-pane" id="tab-how-ia">
+                    <div class="info-grid">
+                        <div class="info-text">
+                            <h3>Clasificación de Texto Basada en IA</h3>
+                            <p>
+                                A diferencia del reconocimiento de imágenes (que busca patrones visuales), el **Procesamiento de Lenguaje Natural (PLN)** entrena computadoras para comprender, interpretar y manipular el lenguaje humano.
+                            </p>
+                            <p>
+                                El modelo original de este proyecto fue entrenado por estudiantes utilizando la plataforma <strong>Machine Learning for Kids</strong>. Recopilaron múltiples ejemplos de mensajes catalogados en dos grupos (clases):
+                            </p>
+                            
+                            <div class="process-steps">
+                                <div class="step-item">
+                                    <div class="step-number">1</div>
+                                    <div class="step-info">
+                                        <h4>Muestras de Entrenamiento</h4>
+                                        <p>Se introducen textos típicos de estafas (triggers de urgencia) y textos seguros para que el clasificador entienda las diferencias gramaticales y contextuales.</p>
+                                    </div>
+                                </div>
+                                <div class="step-item">
+                                    <div class="step-number">2</div>
+                                    <div class="step-info">
+                                        <h4>Tokenización y Pesos de Palabras</h4>
+                                        <p>La IA divide el texto en palabras y expresiones ("tokens"). Asigna pesos matemáticos a palabras clave sospechosas como <em>bloqueo</em>, <em>CBU</em> o <em>premio</em>.</p>
+                                    </div>
+                                </div>
+                                <div class="step-item">
+                                    <div class="step-number">3</div>
+                                    <div class="step-info">
+                                        <h4>Inferencia Híbrida</h4>
+                                        <p>Nuestra interfaz evalúa el mensaje llamando a la API en la nube del modelo. Si no está disponible, un motor de heurística local replica los pesos lingüísticos para clasificar el texto al instante.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-graphic">
+                            <div class="diagram-box">
+                                <h4>Arquitectura del Analizador</h4>
+                                <div class="diagram-flow">
+                                    <div class="diagram-node"><i class="fa-solid fa-keyboard"></i> Texto Ingresado</div>
+                                    <div class="diagram-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                                    <div class="diagram-node node-special">Filtro de URLs y Análisis Semántico</div>
+                                    <div class="diagram-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                                    <div class="diagram-node node-user">Modelo ML4K (API) / Fallback de Heurística</div>
+                                    <div class="diagram-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+                                    <div class="diagram-node"><i class="fa-solid fa-shield-virus"></i> Nivel de Riesgo & Confianza</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: PREVENTION GUIDE -->
+                <div class="tab-pane" id="tab-prevention">
+                    <div class="info-grid">
+                        <div class="info-text">
+                            <h3>Reglas de Oro para Mantenerse a Salvo</h3>
+                            <p class="lead-text">
+                                La mejor defensa ante los intentos de phishing es la prevención activa y la duda razonable. Ningún sistema de seguridad es más efectivo que tu propio sentido común.
+                            </p>
+                            
+                            <ul class="styled-list">
+                                <li>
+                                    <strong>Desconfía de la Urgencia Extrema:</strong>
+                                    Si el mensaje dice "Tu cuenta será cerrada en 1 hora" o "¡Acción inmediata requerida!", respira y duda. Los ciberdelincuentes usan el pánico para anular tu razonamiento lógico.
+                                </li>
+                                <li>
+                                    <strong>Comprueba los Enlaces (URLs):</strong>
+                                    Nunca hagas clic directo. Examina la URL cuidadosamente. Las estafas usan enlaces parecidos pero falsos, como <code>banc0credicoop.com</code> en lugar de <code>bancocredicoop.coop</code>.
+                                </li>
+                                <li>
+                                    <strong>Las Entidades No Piden Tokens o Claves:</strong>
+                                    Ningún banco, soporte técnico ni correo te solicitará jamás tus contraseñas, claves token, ni códigos recibidos por SMS.
+                                </li>
+                                <li>
+                                    <strong>Usa Canales Oficiales:</strong>
+                                    Ante la duda, cierra el mensaje, busca el sitio web oficial en Google o llama al número telefónico de atención al cliente oficial para verificar la información.
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="info-graphic">
+                            <div class="prevention-check-card">
+                                <h4><i class="fa-solid fa-circle-check"></i> Checklist de Seguridad</h4>
+                                <ul class="check-list">
+                                    <li><i class="fa-solid fa-check"></i> ¿Conozco al remitente?</li>
+                                    <li><i class="fa-solid fa-check"></i> ¿La ortografía es perfecta?</li>
+                                    <li><i class="fa-solid fa-check"></i> ¿El enlace usa protocolo HTTPS oficial?</li>
+                                    <li><i class="fa-solid fa-check"></i> ¿Me están apurando para actuar?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 Anti-Phishing AI. Proyecto de Estudiantes - Escuela ProA Río Cuarto.</p>
+            <p class="footer-libs">Entrenado en <i class="fa-solid fa-graduation-cap"></i> Machine Learning for Kids, ejecutado en el navegador con <i class="fa-brands fa-js"></i> Vanilla JS.</p>
+        </div>
+    </footer>
+
+    <!-- Main Javascript entry point -->
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
