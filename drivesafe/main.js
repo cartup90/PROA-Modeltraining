@@ -738,3 +738,33 @@ tabButtons.forEach(btn => {
         document.getElementById(targetTab).classList.add("active");
     });
 });
+
+// --- LÓGICA DE BOTONES DE GRUPO ---
+const btnModel1 = document.getElementById("btn-model-1");
+const btnModel2 = document.getElementById("btn-model-2");
+
+if (btnModel1) {
+    btnModel1.addEventListener("click", async () => {
+        modelUrlInput.value = "https://teachablemachine.withgoogle.com/models/uBf6EKeRr/";
+        if (!isSystemRunning) addLog("URL del Modelo 1 seleccionada. Presiona Iniciar Sistema.", "info");
+        else {
+            btnModel1.disabled = true;
+            addLog("Cambiando al Modelo 1...");
+            await loadModel(modelUrlInput.value);
+            btnModel1.disabled = false;
+        }
+    });
+}
+
+if (btnModel2) {
+    btnModel2.addEventListener("click", async () => {
+        modelUrlInput.value = "./my-pose-model-Bauti/";
+        if (!isSystemRunning) addLog("URL del Modelo 2 seleccionada. Presiona Iniciar Sistema.", "info");
+        else {
+            btnModel2.disabled = true;
+            addLog("Cambiando al Modelo 2...");
+            await loadModel(modelUrlInput.value);
+            btnModel2.disabled = false;
+        }
+    });
+}

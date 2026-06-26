@@ -198,11 +198,15 @@
                         <label class="control-label" for="model-url-input">
                             <span><i class="fa-solid fa-link"></i> URL del Modelo Teachable Machine</span>
                         </label>
-                        <div class="input-action-group">
-                            <input type="text" id="model-url-input" class="form-input" value="https://teachablemachine.withgoogle.com/models/uBf6EKeRr/">
-                            <button id="btn-reload-model" class="btn btn-secondary">Cargar Modelo</button>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <button id="btn-model-1" class="btn btn-secondary" style="flex: 1; font-size: 0.85rem;"><i class="fa-solid fa-users"></i> Grupo 1 (Ambar y Nicolas)</button>
+                            <button id="btn-model-2" class="btn btn-secondary" style="flex: 1; font-size: 0.85rem;"><i class="fa-solid fa-users"></i> Grupo 2 (Thiago, Patricio, Bauti, Ciro)</button>
                         </div>
-                        <p class="input-help">Carga tu modelo personalizado exportado como "Tensorflow.js - Upload shareable link".</p>
+                        <div class="input-with-button">
+                            <input type="url" id="model-url-input" class="form-input" placeholder="https://teachablemachine.withgoogle.com/models/tu-modelo/" value="https://teachablemachine.withgoogle.com/models/Rz7Yh1iB4/">
+                            <button id="btn-reload-model" class="btn btn-secondary"><i class="fa-solid fa-rotate-right"></i> Cargar</button>
+                        </div>
+                        <p class="input-help">Pega el link de tu propio modelo entrenado o selecciona un grupo arriba.</p>
                     </div>
                 </div>
 
@@ -314,7 +318,14 @@
                                         <p>La red procesa las características geométricas del rostro (posición de ojos, orientación de la cabeza). La capa de salida entrega un vector de probabilidades para cada clase.</p>
                                     </div>
                                 </div>
-                                <div class="step-item">
+                            </div>
+                            
+                            <div class="info-alert" style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid #8b5cf6; padding: 1rem; border-radius: 4px; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                                <h4 style="color: #8b5cf6; margin-bottom: 0.5rem;"><i class="fa-solid fa-circle-info"></i> Nota sobre Inteligencia Artificial</h4>
+                                <p style="font-size: 0.9rem; line-height: 1.5; color: #a0aec0; margin: 0;">
+                                    Es importante aclarar que este modelo <strong>no "sabe"</strong> ni "entiende" lo que es un rostro, un billete, palabras, o qué significa estar atento o distraído. En su lugar, la IA <strong>reconoce patrones, márgenes, bordes, colores, texturas y formas</strong> en los datos de entrada. Tras procesar esto a través de múltiples capas de su red neuronal, el modelo aprende qué combinación de estas características abstractas es más representativa de cada clase, para finalmente arrojar una predicción estadística (probabilidad).
+                                </p>
+                            </div>    <div class="step-item">
                                     <div class="step-number">4</div>
                                     <div class="step-info">
                                         <h4>Filtro de Decisión y Alarma</h4>
