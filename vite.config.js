@@ -10,6 +10,7 @@ export default defineConfig({
         drivesafe: resolve(__dirname, 'drivesafe/index.html'),
         lenguadesenas: resolve(__dirname, 'lenguadesenas/index.html'),
         "evitar-phishing": resolve(__dirname, 'evitar-phishing/index.html'),
+        "identificador-billetes": resolve(__dirname, 'identificador-billetes/index.html'),
       },
     },
   },
