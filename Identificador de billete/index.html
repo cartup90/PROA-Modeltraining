@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lector de Billetes - Accesibilidad Visual</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Lector de billetes argentinos utilizando inteligencia artificial. Diseñado para personas con discapacidad visual con alto contraste y respuestas de audio.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS stylesheet -->
+    <link rel="stylesheet" href="./style.css">
+    
+    <!-- TensorFlow.js and Teachable Machine Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <a href="../index.html" class="logo-container" aria-label="Volver al inicio">
+            <i class="fa-solid fa-arrow-left logo-icon"></i>
+            <span class="logo-text">Volver</span>
+        </a>
+        <div class="header-status">
+            <span class="status-indicator-dot" id="system-status-dot"></span>
+            <span id="system-status-text" class="status-text">ESPERANDO</span>
+        </div>
+    </header>
+
+    <main class="app-container">
+        
+        <section class="main-reader-section">
+            <h1 class="visually-hidden">Lector de Billetes Argentinos</h1>
+            
+            <div class="reader-display">
+                <div class="camera-wrapper" id="webcam-container">
+                    <!-- Webcam will be injected here -->
+                    <div class="camera-placeholder" id="camera-loading">
+                        <i class="fa-solid fa-camera camera-placeholder-icon"></i>
+                        <p>Presione INICIAR LECTOR</p>
+                    </div>
+                </div>
+                
+                <div class="result-display" id="result-display" aria-live="polite">
+                    <span class="result-label">Detectando:</span>
+                    <h2 class="result-value" id="result-value">---</h2>
+                </div>
+            </div>
+
+            <!-- Inferences / Probability Bars -->
+            <div class="inference-section">
+                <h3><i class="fa-solid fa-chart-bar"></i> Probabilidades del Modelo</h3>
+                <div id="label-container" class="bars-container">
+                    <!-- Bars injected by JS -->
+                </div>
+            </div>
+
+            <div class="controls-container">
+                <button id="btn-start" class="btn-large btn-primary" aria-label="Iniciar Lector de Billetes">
+                    <i class="fa-solid fa-play"></i> INICIAR LECTOR
+                </button>
+                <button id="btn-stop" class="btn-large btn-danger hidden" aria-label="Detener Lector" disabled>
+                    <i class="fa-solid fa-stop"></i> DETENER
+                </button>
+            </div>
+            
+            <div class="info-grid">
+                <div class="instructions-panel">
+                    <h3><i class="fa-solid fa-volume-high"></i> Instrucciones de Uso</h3>
+                    <p>1. Presione el botón <strong>INICIAR LECTOR</strong>.</p>
+                    <p>2. Permita el acceso a la cámara si el navegador lo solicita.</p>
+                    <p>3. Coloque un billete frente a la cámara.</p>
+                    <p>4. Escuche el valor del billete en voz alta.</p>
+                </div>
+
+                <div class="model-info-panel">
+                    <h3><i class="fa-solid fa-brain"></i> Sobre el Modelo IA</h3>
+                    <p>Este sistema utiliza un modelo de <strong>reconocimiento de imágenes</strong> creado con <em>Teachable Machine</em>.</p>
+                    <p>Fue entrenado aportando <strong>más de 40 fotografías</strong> desde distintos ángulos y condiciones de luz para cada denominación de la moneda argentina.</p>
+                    <div class="warning-box">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span><strong>Atención:</strong> Si el billete se encuentra muy deteriorado, arrugado, o la iluminación es deficiente, es posible que el modelo no funcione con precisión o no lo reconozca adecuadamente.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
