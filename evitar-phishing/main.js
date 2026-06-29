@@ -1,7 +1,7 @@
 import confetti from 'canvas-confetti';
 
 // --- CONFIGURATIONS AND STATIC DATA ---
-const ML4K_KEY = "215192f0-6c00-11f1-9c26-31a98d66dcb6aa4d4e4d-862a-4446-92ab-6563c4b4dcfb";
+const ML4K_KEY = "e0d00dc0-7180-11f1-84cb-9fb5c4dbab843e494676-3f71-4480-9320-3f31704d56f7";
 const API_URL = `https://machinelearningforkids.co.uk/api/scratch/${ML4K_KEY}/classify`;
 
 // Predefined safe and phishing keywords/regex for the heuristic local classifier (in Spanish)
@@ -186,22 +186,34 @@ function classifyLocally(text) {
     if (hasPrize) phishingScore += 30;
     if (hasImpersonation) phishingScore += 15;
 
-    // Minimum check for phishing flag
-    const isPhishing = phishingScore >= 35 || (hasSuspiciousUrl && (hasUrgency || hasCredentials || hasImpersonation));
+    // Classification mapping based on score
+    // - Peligroso: phishingScore >= 50 or (hasSuspiciousUrl && (hasCredentials || hasUrgency))
+    // - Sospechoso: phishingScore >= 20 and < 50
+    // - Seguro: phishingScore < 20
+    const isPeligroso = phishingScore >= 50 || (hasSuspiciousUrl && (hasCredentials || hasUrgency));
+    const isSospechoso = !isPeligroso && phishingScore >= 20;
 
-    if (isPhishing) {
+    if (isPeligroso) {
         // High confidence of Phishing
         const confidence = Math.min(75 + phishingScore, 98);
         return {
-            class_name: 'phishing',
+            class_name: 'peligroso',
+            confidence: confidence,
+            triggers: triggers
+        };
+    } else if (isSospechoso) {
+        // Moderate confidence
+        const confidence = Math.min(50 + phishingScore, 85);
+        return {
+            class_name: 'sospechoso',
             confidence: confidence,
             triggers: triggers
         };
     } else {
-        // It's Safe
+        // It's Seguro
         const confidence = Math.max(95 - phishingScore, 70);
         return {
-            class_name: 'safe',
+            class_name: 'seguro',
             confidence: confidence,
             triggers: [
                 { type: 'safe', text: 'No se detectaron enlaces o IPs fraudulentas.' },
@@ -327,10 +339,20 @@ function triggerScan(text) {
                     processResults(classifyLocally(text), 'local');
                 } else if (Array.isArray(results) && results.length > 0) {
                     // Successful classification from API
-                    const match = results[0];
+                    const topMatch = results[0];
+                    let className = topMatch.class_name.toLowerCase();
+                    let confidence = topMatch.confidence;
+                    
+                    // Si el modelo arroja muy poca probabilidad en ambos, entonces será considerado "Seguro"
+                    // Consideramos "muy poca probabilidad" un valor menor a 60%
+                    if (confidence < 60) {
+                        className = 'seguro';
+                        confidence = 100 - topMatch.confidence;
+                    }
+                    
                     processResults({
-                        class_name: match.class_name.toLowerCase(), // safe vs phishing
-                        confidence: match.confidence,
+                        class_name: className,
+                        confidence: confidence,
                         triggers: [] // Will build triggers based on text anyway to enrich UI details
                     }, 'api');
                 } else {
@@ -352,7 +374,10 @@ function triggerScan(text) {
 
 // Process results & render interface changes
 function processResults(result, source) {
-    const isPhishing = result.class_name === 'phishing' || result.class_name === 'peligroso';
+    const className = result.class_name.toLowerCase();
+    const isPeligroso = className === 'phishing' || className === 'peligroso';
+    const isSospechoso = className === 'sospechoso';
+    const isSeguro = className === 'safe' || className === 'seguro';
     const confidence = result.confidence;
 
     // Rich details if triggers list is empty (API fallback triggers enrichments)
@@ -373,7 +398,7 @@ function processResults(result, source) {
     }
 
     // Render results based on classifications
-    if (isPhishing) {
+    if (isPeligroso) {
         // Set dynamic colors variables to Red Alert
         document.documentElement.style.setProperty('--accent-color', 'var(--danger-color)');
         document.documentElement.style.setProperty('--accent-glow', 'var(--danger-glow)');
@@ -389,6 +414,31 @@ function processResults(result, source) {
         // Set text alert messages
         scannerMainMsg.textContent = 'PELIGRO: ESTAFA DETECTADA';
         scannerSubMsg.textContent = 'El texto presenta un alto índice de phishing';
+
+        // Animate circular gauge
+        const offset = 314.16 - (314.16 * confidence) / 100;
+        gaugeProgress.style.strokeDashoffset = offset;
+        riskScoreDisplay.textContent = `${confidence.toFixed(0)}%`;
+
+        // Render analysis details
+        renderIndicators(triggers);
+
+    } else if (isSospechoso) {
+        // Set dynamic colors variables to Warning Yellow
+        document.documentElement.style.setProperty('--accent-color', 'var(--warning-color)');
+        document.documentElement.style.setProperty('--accent-glow', 'var(--warning-glow)');
+
+        // Play warning scan sound
+        playSound('scan');
+        
+        // Add warning classes
+        scannerScreen.className = 'scanner-screen state-warning';
+        systemStatusDot.className = 'status-indicator-dot status-warning';
+        systemStatusText.textContent = 'MENSAJE SOSPECHOSO';
+
+        // Set text warning messages
+        scannerMainMsg.textContent = 'ALERTA: MENSAJE SOSPECHOSO';
+        scannerSubMsg.textContent = 'El texto contiene elementos potencialmente peligrosos';
 
         // Animate circular gauge
         const offset = 314.16 - (314.16 * confidence) / 100;
@@ -427,6 +477,15 @@ function processResults(result, source) {
         const offset = 314.16 - (314.16 * riskLevel) / 100;
         gaugeProgress.style.strokeDashoffset = offset;
         riskScoreDisplay.textContent = `${riskLevel.toFixed(0)}%`;
+
+        // If there are no threat triggers, show safe guidelines
+        if (triggers.length === 0) {
+            triggers = [
+                { type: 'safe', text: 'No se detectaron enlaces o IPs fraudulentas.' },
+                { type: 'safe', text: 'El mensaje no solicita códigos token ni credenciales bancarias.' },
+                { type: 'safe', text: 'El tono conversacional es normal, libre de urgencia falsa.' }
+            ];
+        }
 
         // Render indicators
         renderIndicators(triggers);
